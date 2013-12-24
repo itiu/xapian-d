@@ -692,6 +692,37 @@ class XapianTermGenerator
 	}
     }
 
+    virtual void index_text_without_positions (const char* _data, unsigned long long _data_len, signed char *err)
+    {
+	try
+	{
+    	    std::string data (_data, (unsigned long)_data_len);
+
+	    wrapped->index_text_without_positions (data);
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
+
+    virtual void index_text_without_positions (const char* _data, unsigned long long _data_len, const char* _prefix, unsigned long long _prefix_len, signed char *err)
+    {
+	try
+	{
+    	    std::string data (_data, (unsigned long)_data_len);
+    	    std::string prefix (_prefix, (unsigned long)_prefix_len);
+
+	    wrapped->index_text_without_positions (data, 1, prefix);
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
+
     virtual void index_data(int _data, const char* _prefix, unsigned long long _prefix_len, signed char *err)
     {
 	try
