@@ -851,6 +851,43 @@ class XapianQueryParser
 	}
     }
 
+    virtual XapianQuery* parse_query(const char* _query_string, unsigned long long _query_string_len, unsigned flags, signed char *err)
+    {
+	try
+	{
+	    std::string query_string (_query_string, (unsigned long)_query_string_len);
+	    Xapian::Query xq = qp->parse_query(query_string, flags);
+	    XapianQuery* _xq = new XapianQuery ();
+	    _xq->query = xq;
+	    *err = 0;
+	    return _xq;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return NULL;
+	}
+    }
+
+    virtual XapianQuery* parse_query(const char* _query_string, unsigned long long _query_string_len, unsigned flags, const char* _prefix, unsigned long long _prefix_len, signed char *err)
+    {
+	try
+	{
+	    std::string query_string (_query_string, (unsigned long)_query_string_len);
+	    std::string prefix (_prefix, (unsigned long)_prefix_len);
+	    Xapian::Query xq = qp->parse_query(query_string, flags, prefix);
+	    XapianQuery* _xq = new XapianQuery ();
+	    _xq->query = xq;
+	    *err = 0;
+	    return _xq;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return NULL;
+	}
+    }
+
     virtual void add_prefix (const char* _field, unsigned long long _field_len, const char* _prefix, unsigned long long _prefix_len, signed char *err)
     {
 	try
