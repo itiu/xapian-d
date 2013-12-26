@@ -958,6 +958,40 @@ XapianWritableDatabase* new_WritableDatabase(const char* _path, unsigned long lo
 
 }
 
+XapianWritableDatabase* new_InMemoryWritableDatabase(signed char *err)
+{
+	try
+	{
+    	    Xapian::WritableDatabase* db = new Xapian::WritableDatabase(Xapian::InMemory::open());
+    	    XapianWritableDatabase* _new = new XapianWritableDatabase ();
+    	    _new->db = db;
+    	    *err = 0;
+    	    return _new;
+        }
+        catch (Xapian::Error ex)
+        {
+            *err = get_err_code (ex.get_type ());
+	    return NULL;
+        }
+
+}
+
+XapianDatabase* new_InMemoryDatabase(XapianWritableDatabase* xwdb, signed char *err)
+{
+	try
+	{
+    	    XapianDatabase* _new = new XapianDatabase ();
+    	    _new->db = xwdb->db;
+	    *err = 0;
+    	    return _new;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return NULL;
+	}
+}
+
 XapianQueryParser* new_QueryParser(signed char *err)
 {
 	try
