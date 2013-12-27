@@ -260,6 +260,7 @@ interface XapianDatabase
 
 interface XapianWritableDatabase
 {
+    XapianEnquire new_Enquire(byte *err);
     uint add_document(XapianDocument doc, byte *err);
     uint replace_document(const char *_unique_term, ulong _unique_term_len, XapianDocument document, byte *err);
     void commit(byte *err);
@@ -317,6 +318,7 @@ interface XapianQueryParser
 {
     void set_stemmer(XapianStem stemmer, byte *err);
     void set_database(XapianDatabase db, byte *err);
+    void set_database(XapianWritableDatabase db, byte *err);
     void set_stemming_strategy(stem_strategy strategy, byte *err);
     XapianQuery parse_query(char *query_string, ulong query_string_len, byte *err);
     XapianQuery parse_query(char *query_string, ulong query_string_len, feature_flag flags, byte *err);

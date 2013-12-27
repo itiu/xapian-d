@@ -528,6 +528,23 @@ class XapianWritableDatabase
  public:
     Xapian::WritableDatabase* db;
 
+    virtual XapianEnquire* new_Enquire(signed char *err)
+    {
+        try
+        {
+            Xapian::Enquire* enquire = new Xapian::Enquire (*db);
+            XapianEnquire* _new = new XapianEnquire ();
+            _new->enquire = enquire;
+            *err = 0;
+            return _new;
+        }
+        catch (Xapian::Error ex)
+        {
+            *err = get_err_code (ex.get_type ());
+            return NULL;
+        }
+    }
+
     virtual Xapian::docid add_document (XapianDocument doc, signed char *err)
     {
 	try
@@ -808,6 +825,19 @@ class XapianQueryParser
     }
 
     virtual void set_database(XapianDatabase* db, signed char *err)
+    {
+	try
+	{
+	    qp->set_database (*db->db);
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
+
+    virtual void set_database(XapianWritableDatabase* db, signed char *err)
     {
 	try
 	{
