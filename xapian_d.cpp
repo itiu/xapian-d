@@ -638,6 +638,19 @@ class XapianDatabase
 	    *err = get_err_code (ex.get_type ());
 	}
     }
+
+    virtual void reopen(signed char *err)
+    {
+	try
+	{
+	    db->reopen ();
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
     
 };
 
@@ -1186,6 +1199,12 @@ XapianQuery* new_Query_equal(int op_, int slot, const char* _str, unsigned long 
 }
 
 ///////////////////
+
+void destroy_Database(XapianDatabase* db)
+{
+    if (db != NULL)
+        delete db;
+}
 
 void destroy_Document(XapianDocument* doc)
 {
