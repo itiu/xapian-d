@@ -469,6 +469,22 @@ MSet::Internal::read_docs() const
     requested_docs.clear();
 }
 
+//////////////////////////////////////////////////////////////////////
+
+Xapian::docid
+MSet::get_id_by_index(Xapian::doccount index)
+{
+    return internal->items[index].did;
+}
+
+Document
+MSet::get_doc_by_index(Xapian::doccount index)
+{
+    return internal->get_doc_by_index(index);
+}
+
+//////////////////////////////////////////////////////////////////////
+
 // Methods for Xapian::ESet
 
 ESet::ESet() : internal(new Internal) { }
