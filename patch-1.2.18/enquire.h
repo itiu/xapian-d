@@ -67,6 +67,9 @@ class XAPIAN_VISIBILITY_DEFAULT MSet {
 	/// Copying is allowed (and is cheap).
 	MSet(const MSet & other);
 
+        Xapian::docid get_id_by_index(Xapian::doccount index);
+        Document get_doc_by_index(Xapian::doccount index);
+
 	/// Assignment is allowed (and is cheap).
 	void operator=(const MSet &other);
 
