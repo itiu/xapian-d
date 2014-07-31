@@ -368,6 +368,13 @@ class XapianQuery
 	query = _query;
     }
 
+    XapianQuery (int op_, int slot, double _value) 
+    {
+	string value = Xapian::sortable_serialise(_value);
+	Xapian::Query _query ((Xapian::Query::op)op_, slot, value);
+	query = _query;	
+    }
+
 //    XapianQuery (int op_, XapianQuery* left, XapianQuery* right) 
 //    {
 //	query = *new Xapian::Query ((Xapian::Query::op)op_, left->query, right->query);
@@ -1182,6 +1189,21 @@ XapianQuery* new_Query_range(int op_, int slot, double _begin, double _end, sign
 	}
 }
 
+XapianQuery* new_Query_double(int op_, int slot, double _value, signed char *err)
+{
+	try
+	{
+	    XapianQuery* _new = new XapianQuery (op_, slot, _value);
+	    *err = 0;
+	    return _new;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return NULL;
+	}
+}
+
 // must be OP_VALUE_GE or OP_VALUE_LE. 
 XapianQuery* new_Query_equal(int op_, int slot, const char* _str, unsigned long long _str_len, signed char *err)
 {
@@ -1199,6 +1221,34 @@ XapianQuery* new_Query_equal(int op_, int slot, const char* _str, unsigned long 
 }
 
 ///////////////////
+
+
+void sortable_serialise (double value, char **out_val, unsigned int **out_val_length, signed char *err)
+{
+
+    try
+    {
+    	string data = Xapian::sortable_serialise(value);
+
+        *out_val = &data[0];
+        unsigned int length = data.size();
+	std::cout<<"@x length="<<length<<std::endl;
+        std::cout<<"@x data[0]=" << (unsigned int) data[0] <<std::endl;
+        std::cout<<"@x data[1]=" << (unsigned int) data[1] <<std::endl;
+        std::cout<<"@x data[2]=" << (unsigned int) data[2] <<std::endl;
+        std::cout<<"@x data[3]=" << (unsigned int) data[3] <<std::endl;
+        std::cout<<"@x data[4]=" << (unsigned int) data[4] <<std::endl;
+
+        *out_val_length = &length;
+            
+        *err = 0;
+    }   
+    catch (Xapian::Error ex)
+    {   
+        *err = get_err_code (ex.get_type ());
+    }   
+}
+
 
 void destroy_Database(XapianDatabase* db)
 {
