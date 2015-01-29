@@ -396,6 +396,22 @@ class XapianQuery
 	}
     }
 
+    virtual void serialise (char **out_val, unsigned int **out_val_length, signed char *err)
+    {
+	try
+	{
+	    std::string ss = query.serialise ();
+	    *out_val = &ss[0];
+	    unsigned int length = ss.size();
+	    *out_val_length = &length;
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
+
     virtual XapianQuery* add_right_query (int op_, XapianQuery* _right, signed char *err)
     {
 	try
@@ -611,6 +627,14 @@ class XapianWritableDatabase
     }
 };
 
+class XapianTermIterator
+{
+    public:
+	Xapian::TermIterator *begin;
+	Xapian::TermIterator *end;
+	Xapian::TermIterator *current;
+};
+
 class XapianDatabase
 {
  public:
@@ -656,6 +680,28 @@ class XapianDatabase
 	catch (Xapian::Error ex)
 	{	    
 	    *err = get_err_code (ex.get_type ());
+	}
+    }
+
+    virtual XapianTermIterator* allterms 	(const char* prefix, unsigned long long _data_len, signed char *err)
+    {
+	try
+	{
+    	    std::string data (prefix, (unsigned long)_data_len);
+
+	    Xapian::TermIterator begin = db->allterms_begin (data);
+	    Xapian::TermIterator end = db->allterms_end (data);
+	    XapianTermIterator* _ti = new XapianTermIterator ();
+	    _ti->begin = &begin;
+	    _ti->current = &begin;
+	    _ti->end = &end;
+	    *err = 0;
+	    return _ti;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return NULL;
 	}
     }
     
@@ -1232,12 +1278,12 @@ void sortable_serialise (double value, char **out_val, unsigned int **out_val_le
 
         *out_val = &data[0];
         unsigned int length = data.size();
-	std::cout<<"@x length="<<length<<std::endl;
-        std::cout<<"@x data[0]=" << (unsigned int) data[0] <<std::endl;
-        std::cout<<"@x data[1]=" << (unsigned int) data[1] <<std::endl;
-        std::cout<<"@x data[2]=" << (unsigned int) data[2] <<std::endl;
-        std::cout<<"@x data[3]=" << (unsigned int) data[3] <<std::endl;
-        std::cout<<"@x data[4]=" << (unsigned int) data[4] <<std::endl;
+//	std::cout<<"@x length="<<length<<std::endl;
+//        std::cout<<"@x data[0]=" << (unsigned int)(char) data[0] <<std::endl;
+//        std::cout<<"@x data[1]=" << (unsigned int)(char) data[1] <<std::endl;
+//        std::cout<<"@x data[2]=" << (unsigned int)(char) data[2] <<std::endl;
+//        std::cout<<"@x data[3]=" << (unsigned int)(char) data[3] <<std::endl;
+//        std::cout<<"@x data[4]=" << (unsigned int)(char) data[4] <<std::endl;
 
         *out_val_length = &length;
             
