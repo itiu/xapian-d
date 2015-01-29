@@ -251,6 +251,10 @@ interface XapianNumberValueRangeProcessor
 
 interface XapianTermIterator
 {
+    void reset(byte *err);
+    void next(byte *err);
+    bool is_next(byte *err);
+    void get_term(char **out_val, uint **out_val_length, byte *err);
 }
 
 /// Parses a piece of text and generate terms.
@@ -293,8 +297,7 @@ interface XapianDatabase
     XapianEnquire new_Enquire(byte *err);
     void close(byte *err);
     void reopen(byte *err);
-    XapianTermIterator allterms_begin (const char *prefix_str, ulong prefix_len);
-    XapianTermIterator allterms_end (const char *prefix_str, ulong prefix_len);
+    XapianTermIterator allterms (const char *prefix_str, ulong prefix_len);
 }
 
 /// This class provides read/write access to a database
