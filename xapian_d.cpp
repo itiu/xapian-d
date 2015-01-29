@@ -630,9 +630,74 @@ class XapianWritableDatabase
 class XapianTermIterator
 {
     public:
-	Xapian::TermIterator *begin;
-	Xapian::TermIterator *end;
-	Xapian::TermIterator *current;
+	Xapian::TermIterator begin;
+	Xapian::TermIterator end;
+	Xapian::TermIterator current;
+
+    virtual void reset (signed char *err)
+    {
+	try
+	{
+	    current = begin;
+	    
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
+
+    virtual void next (signed char *err)
+    {
+	try
+	{
+	    if (current != end)
+		++current;
+	    
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }	
+
+    virtual bool is_next (signed char *err)
+    {
+	try
+	{
+	    *err = 0;
+	    if (current != end)
+		return true;
+	    else
+		return false;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return false;
+	}
+    }	
+
+    virtual void get_term (char **out_val, unsigned int **out_val_length, signed char *err)
+    {
+	try
+	{
+            string data = *current;
+            *out_val = &data[0];
+            unsigned int length = data.size();
+            *out_val_length = &length;
+
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }	
+
+
 };
 
 class XapianDatabase
@@ -692,9 +757,9 @@ class XapianDatabase
 	    Xapian::TermIterator begin = db->allterms_begin (data);
 	    Xapian::TermIterator end = db->allterms_end (data);
 	    XapianTermIterator* _ti = new XapianTermIterator ();
-	    _ti->begin = &begin;
-	    _ti->current = &begin;
-	    _ti->end = &end;
+	    _ti->begin = begin;
+	    _ti->current = begin;
+	    _ti->end = end;
 	    *err = 0;
 	    return _ti;
 	}
