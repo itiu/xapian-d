@@ -599,6 +599,22 @@ class XapianWritableDatabase
 	}
     }
 
+    virtual void delete_document (const char* _unique_term, unsigned long long _unique_term_len, signed char *err)
+    {
+	try
+	{
+    	    std::string unique_term (_unique_term, (unsigned long)_unique_term_len);
+
+	    db->delete_document (unique_term);
+	    *err = 0;
+	    return;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return;
+	}
+    }
 
     virtual void commit(signed char *err)
     {
@@ -748,7 +764,7 @@ class XapianDatabase
 	}
     }
 
-    virtual XapianTermIterator* allterms 	(const char* prefix, unsigned long long _data_len, signed char *err)
+    virtual XapianTermIterator* allterms (const char* prefix, unsigned long long _data_len, signed char *err)
     {
 	try
 	{
