@@ -469,7 +469,7 @@ MSet::Internal::read_docs() const
     requested_docs.clear();
 }
 
-//////////////////////////////////////////////////////////////////////
+// ---- patch ---- begin 
 
 Xapian::docid
 MSet::get_id_by_index(Xapian::doccount index)
@@ -483,7 +483,8 @@ MSet::get_doc_by_index(Xapian::doccount index)
     return internal->get_doc_by_index(index);
 }
 
-//////////////////////////////////////////////////////////////////////
+// ---- patch ---- end 
+
 
 // Methods for Xapian::ESet
 
@@ -709,7 +710,7 @@ Enquire::Internal::get_mset(Xapian::doccount first, Xapian::doccount maxitems,
     // networked case.
     retval.internal->enquire = this;
 
-    return retval;
+    RETURN(retval);
 }
 
 ESet
@@ -803,7 +804,7 @@ Enquire::Internal::get_matching_terms(Xapian::docid did) const
 	string term = *docterms;
         map<string, unsigned int>::iterator t = tmap.find(term);
         if (t != tmap.end()) matching_terms.push_back(term);
-	docterms++;
+	++docterms;
     }
 
     // sort the resulting list by query position.

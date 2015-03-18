@@ -67,8 +67,10 @@ class XAPIAN_VISIBILITY_DEFAULT MSet {
 	/// Copying is allowed (and is cheap).
 	MSet(const MSet & other);
 
+// ---- patch ---- begin
         Xapian::docid get_id_by_index(Xapian::doccount index);
         Document get_doc_by_index(Xapian::doccount index);
+// ---- patch ---- end
 
 	/// Assignment is allowed (and is cheap).
 	void operator=(const MSet &other);
@@ -908,6 +910,12 @@ class XAPIAN_VISIBILITY_DEFAULT Enquire {
 	 * @param sort_key  value number to sort on.
 	 *
 	 * @param reverse   If true, reverses the sort order of sort_key.
+	 *		    Beware that in 1.2.16 and earlier, the sense
+	 *		    of this parameter was incorrectly inverted
+	 *		    and inconsistent with the other set_sort_by_...
+	 *		    methods.  This was fixed in 1.2.17, so make that
+	 *		    version a minimum requirement if this detail
+	 *		    matters to your application.
 	 */
 	void set_sort_by_relevance_then_value(Xapian::valueno sort_key,
 					      bool reverse);
@@ -927,7 +935,12 @@ class XAPIAN_VISIBILITY_DEFAULT Enquire {
 	 * @param sorter    The functor to use for generating keys.
 	 *
 	 * @param reverse   If true, reverses the sort order of the generated
-	 *		    keys.
+	 *		    keys.  Beware that in 1.2.16 and earlier, the sense
+	 *		    of this parameter was incorrectly inverted
+	 *		    and inconsistent with the other set_sort_by_...
+	 *		    methods.  This was fixed in 1.2.17, so make that
+	 *		    version a minimum requirement if this detail
+	 *		    matters to your application.
 	 */
 	void set_sort_by_relevance_then_key(Xapian::KeyMaker * sorter,
 					    bool reverse);
