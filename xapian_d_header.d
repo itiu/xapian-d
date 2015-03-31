@@ -242,6 +242,10 @@ const int DB_CREATE_OR_OVERWRITE = 3;
 /** Open for read/write; fail if no db exists. */
 const int DB_OPEN                = 4;
 
+const int BRASS = 1;
+const int CHERT = 2;
+const int IN_MEMORY = 3;
+
 extern (C++)
 {
 /// Base class for value range processors
@@ -297,7 +301,8 @@ interface XapianDatabase
     XapianEnquire new_Enquire(byte *err);
     void close(byte *err);
     void reopen(byte *err);
-    XapianTermIterator allterms (const char *prefix_str, ulong prefix_len, byte *err);
+    XapianTermIterator allterms(const char *prefix_str, ulong prefix_len, byte *err);
+    void add_database (XapianDatabase add_db, byte *err);    
 }
 
 /// This class provides read/write access to a database
@@ -388,16 +393,10 @@ interface XapianMultiValueKeyMaker
 }
 
 /// -
-XapianDatabase new_Database(const char *path, ulong path_len, byte *err);
+XapianDatabase new_Database(const char *path, ulong path_len, int db_type, byte *err);
 
 /// -
-XapianDatabase new_InMemoryDatabase(byte *err);
-
-/// -
-XapianWritableDatabase new_WritableDatabase(const char *path, ulong path_len, int action, byte *err);
-
-/// -
-XapianWritableDatabase new_InMemoryWritableDatabase(byte *err);
+XapianWritableDatabase new_WritableDatabase(const char *path, ulong path_len, int action, int db_type, byte *err);
 
 /// -
 XapianDocument new_Document(byte *err);

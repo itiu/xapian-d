@@ -785,6 +785,18 @@ class XapianDatabase
 	    return NULL;
 	}
     }
+
+    virtual void add_database (XapianDatabase* add_db, signed char *err)
+    {
+	try
+	{
+	    db->add_database (*(add_db->db));
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
     
 };
 
@@ -1096,13 +1108,44 @@ class XapianQueryParser
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
+const int BRASS = 1;
+const int CHERT = 2;
+const int IN_MEMORY = 3;
 
-XapianDatabase* new_Database(const char* _path, unsigned long long _path_len, signed char *err)
+XapianDatabase* new_Database(const char* _path, unsigned int _path_len, int db_type, signed char *err)
 {
 	try
 	{
     	    std::string path (_path, (unsigned long)_path_len);
-    	    Xapian::Database* db = new Xapian::Database(path);
+
+    	    Xapian::Database* db;
+	    if (db_type == BRASS)
+    	     db = new Xapian::Database(Xapian::Brass::open(path));
+	    else if (db_type == CHERT)
+    	     db = new Xapian::Database(Xapian::Chert::open(path));
+	    else if (db_type == IN_MEMORY)
+    	     db = new Xapian::Database(Xapian::InMemory::open());
+
+
+    	    XapianDatabase* _new = new XapianDatabase ();
+    	    _new->db = db;
+	    *err = 0;
+        return _new;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return NULL;
+	}
+}
+
+XapianDatabase* new_Database(signed char *err)
+{
+	try
+	{
+    	    Xapian::Database* db;
+    	     db = new Xapian::Database();
+
     	    XapianDatabase* _new = new XapianDatabase ();
     	    _new->db = db;
 	    *err = 0;
@@ -1116,12 +1159,20 @@ XapianDatabase* new_Database(const char* _path, unsigned long long _path_len, si
 }
 
 
-XapianWritableDatabase* new_WritableDatabase(const char* _path, unsigned long long _path_len, int action, signed char *err)
+XapianWritableDatabase* new_WritableDatabase(const char* _path, unsigned int _path_len, int action, int db_type, signed char *err)
 {
 	try
 	{
     	    std::string path (_path, (unsigned long)_path_len);
-    	    Xapian::WritableDatabase* db = new Xapian::WritableDatabase(path, action);
+
+    	    Xapian::WritableDatabase* db;
+	    if (db_type == BRASS)
+    	     db = new Xapian::WritableDatabase(Xapian::Brass::open(path, action));
+	    else if (db_type == CHERT)
+    	     db = new Xapian::WritableDatabase(Xapian::Chert::open(path, action));
+	    else if (db_type == IN_MEMORY)
+    	     db = new Xapian::WritableDatabase(Xapian::InMemory::open());
+
     	    XapianWritableDatabase* _new = new XapianWritableDatabase ();
     	    _new->db = db;
     	    *err = 0;
@@ -1133,40 +1184,6 @@ XapianWritableDatabase* new_WritableDatabase(const char* _path, unsigned long lo
 	    return NULL;
         }
 
-}
-
-XapianWritableDatabase* new_InMemoryWritableDatabase(signed char *err)
-{
-	try
-	{
-    	    Xapian::WritableDatabase* db = new Xapian::WritableDatabase(Xapian::InMemory::open());
-    	    XapianWritableDatabase* _new = new XapianWritableDatabase ();
-    	    _new->db = db;
-    	    *err = 0;
-    	    return _new;
-        }
-        catch (Xapian::Error ex)
-        {
-            *err = get_err_code (ex.get_type ());
-	    return NULL;
-        }
-
-}
-
-XapianDatabase* new_InMemoryDatabase(XapianWritableDatabase* xwdb, signed char *err)
-{
-	try
-	{
-    	    XapianDatabase* _new = new XapianDatabase ();
-    	    _new->db = xwdb->db;
-	    *err = 0;
-    	    return _new;
-	}
-	catch (Xapian::Error ex)
-	{	    
-	    *err = get_err_code (ex.get_type ());
-	    return NULL;
-	}
 }
 
 XapianQueryParser* new_QueryParser(signed char *err)
@@ -1186,8 +1203,9 @@ XapianQueryParser* new_QueryParser(signed char *err)
 	}
 }
 
-XapianStem* new_Stem(char* _language, unsigned long long _language_len, signed char *err)
+XapianStem* new_Stem(char* _language, unsigned int _language_len, signed char *err)
 {
+
 	try
 	{
 	    string language (_language, (unsigned long)_language_len);
@@ -1286,7 +1304,7 @@ XapianQuery* new_Query(signed char *err)
 	}
 }
 
-XapianQuery* new_Query(const char* _str, unsigned long long _str_len, signed char *err)
+XapianQuery* new_Query(const char* _str, unsigned int _str_len, signed char *err)
 {
 	try
 	{
