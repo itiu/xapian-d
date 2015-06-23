@@ -641,6 +641,19 @@ class XapianWritableDatabase
 	    *err = get_err_code (ex.get_type ());
 	}
     }
+
+    virtual void reopen(signed char *err)
+    {
+	try
+	{
+	    db->reopen ();
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
 };
 
 class XapianTermIterator
