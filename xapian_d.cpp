@@ -64,6 +64,10 @@ class XapianNumberValueRangeProcessor
 
 class XapianDocument
 {
+    private:
+        string g_out_str;
+	unsigned int g_out_int;
+
     public:
 	Xapian::Document wrapped;
 
@@ -71,10 +75,10 @@ class XapianDocument
     {    
 	try
 	{
-	    string data = wrapped.get_data ();
-    	    *out_val = &data[0];
-	    unsigned int length = data.size();
-	    *out_val_length = &length;
+	    g_out_str = wrapped.get_data ();
+    	    *out_val = &g_out_str[0];
+	    g_out_int = g_out_str.size();
+	    *out_val_length = &g_out_int;
 	    *err = 0;
 	}
 	catch (Xapian::Error ex)
@@ -181,16 +185,30 @@ class XapianDocument
 	}
     }
 
+    ~XapianDocument ()
+    {
+//	    cout << "~XapianDocument ()" << endl; 
+    }
+
 };
 
 
 class XapianMSetIterator
 {
+    private:
+        string g_out_str;
+        unsigned int g_out_int;
+
     public:
         Xapian::doccount index;
         Xapian::MSet* mset;
 
-	friend class Xapian::MSet;
+    friend class Xapian::MSet;
+
+    ~XapianMSetIterator ()
+    {
+//	 cout << "~XapianMSetIterator ()" << endl; 
+    }
 
     virtual unsigned int get_documentid (signed char *err)
     {
@@ -224,17 +242,17 @@ class XapianMSetIterator
 	}
     }	
 
-
     virtual void get_document_data (char **out_val, unsigned int **out_val_length, signed char *err)
     {
 	try
 	{
 	    Xapian::Document document = mset->get_doc_by_index(index);
 
-            string data = document.get_data ();
-            *out_val = &data[0];
-            unsigned int length = data.size();
-            *out_val_length = &length;
+            g_out_str = document.get_data ();
+
+            *out_val = &g_out_str[0];
+            g_out_int = g_out_str.size();
+            *out_val_length = &g_out_int;
 
 	    *err = 0;
 	}
@@ -277,12 +295,19 @@ class XapianMSetIterator
 	}
     }	
 
+//    virtual ~XapianMSetIterator (); 
+
 };
 
 class XapianMSet
 {
     public:
 	Xapian::MSet wrapped;
+
+    ~XapianMSet ()
+    {
+//	 cout << "~XapianMSet ()" << endl; 
+    }
 
     virtual int get_matches_estimated (signed char *err)
     {
@@ -329,18 +354,17 @@ class XapianMSet
 	}
     }
 
+//    virtual ~XapianMSet ();
 };
 
 class XapianQuery
 {
+    private:
+        string g_out_str;
+        unsigned int g_out_int;
+
     public:
 	Xapian::Query query;
-
-
-    ~XapianQuery () 
-    {
-//	delete query;
-    }
 
     XapianQuery () : query ()
     {
@@ -384,10 +408,12 @@ class XapianQuery
     {
 	try
 	{
-	    std::string ss = query.get_description ();
-	    *out_val = &ss[0];
-	    unsigned int length = ss.size();
-	    *out_val_length = &length;
+	    g_out_str = query.get_description ();
+
+            *out_val = &g_out_str[0];
+            g_out_int = g_out_str.size();
+            *out_val_length = &g_out_int;
+
 	    *err = 0;
 	}
 	catch (Xapian::Error ex)
@@ -400,10 +426,12 @@ class XapianQuery
     {
 	try
 	{
-	    std::string ss = query.serialise ();
-	    *out_val = &ss[0];
-	    unsigned int length = ss.size();
-	    *out_val_length = &length;
+	    g_out_str = query.serialise ();
+
+            *out_val = &g_out_str[0];
+            g_out_int = g_out_str.size();
+            *out_val_length = &g_out_int;
+
 	    *err = 0;
 	}
 	catch (Xapian::Error ex)
@@ -433,6 +461,11 @@ class XapianQuery
 	}
     }
 
+     ~XapianQuery () 
+    {
+//	    cout << "~XapianQuery ()" << endl; 
+    }
+
 };
 
 class XapianMultiValueKeyMaker
@@ -441,10 +474,6 @@ class XapianMultiValueKeyMaker
         Xapian::MultiValueKeyMaker wrapped;
 
     XapianMultiValueKeyMaker ()
-    {
-    }
-
-    ~XapianMultiValueKeyMaker ()
     {
     }
 
@@ -474,18 +503,13 @@ class XapianMultiValueKeyMaker
 	}
     }
 
+//    virtual ~XapianMultiValueKeyMaker ();
 };
 
 class XapianEnquire
 {
     public:
 	Xapian::Enquire* enquire;
-
-    ~XapianEnquire ()
-    {
-	delete enquire;
-    }
-
 
     virtual void set_query(XapianQuery* query, signed char *err)
     {
@@ -543,6 +567,8 @@ class XapianEnquire
 	    *err = get_err_code (ex.get_type ());
 	}
     }
+
+//    virtual ~XapianEnquire ();
 
 };
 
@@ -654,10 +680,16 @@ class XapianWritableDatabase
 	    *err = get_err_code (ex.get_type ());
 	}
     }
+
+//    virtual ~XapianWritableDatabase ();
 };
 
 class XapianTermIterator
 {
+    private:
+        string g_out_str;
+        unsigned int g_out_int;
+
     public:
 	Xapian::TermIterator begin;
 	Xapian::TermIterator end;
@@ -713,10 +745,11 @@ class XapianTermIterator
     {
 	try
 	{
-            string data = *current;
-            *out_val = &data[0];
-            unsigned int length = data.size();
-            *out_val_length = &length;
+            g_out_str = *current;
+
+            *out_val = &g_out_str[0];
+            g_out_int = g_out_str.size();
+            *out_val_length = &g_out_int;
 
 	    *err = 0;
 	}
@@ -726,7 +759,7 @@ class XapianTermIterator
 	}
     }	
 
-
+//    virtual ~XapianTermIterator();
 };
 
 class XapianDatabase
@@ -810,8 +843,9 @@ class XapianDatabase
 	    *err = get_err_code (ex.get_type ());
 	}
     }
-    
+
 };
+
 
 class XapianStem
 {
@@ -1379,25 +1413,19 @@ XapianQuery* new_Query_equal(int op_, int slot, const char* _str, unsigned long 
 }
 
 ///////////////////
-
+        string gg_out_str;
+        unsigned int gg_out_int;
 
 void sortable_serialise (double value, char **out_val, unsigned int **out_val_length, signed char *err)
 {
 
     try
     {
-    	string data = Xapian::sortable_serialise(value);
+    	gg_out_str = Xapian::sortable_serialise(value);
 
-        *out_val = &data[0];
-        unsigned int length = data.size();
-//	std::cout<<"@x length="<<length<<std::endl;
-//        std::cout<<"@x data[0]=" << (unsigned int)(char) data[0] <<std::endl;
-//        std::cout<<"@x data[1]=" << (unsigned int)(char) data[1] <<std::endl;
-//        std::cout<<"@x data[2]=" << (unsigned int)(char) data[2] <<std::endl;
-//        std::cout<<"@x data[3]=" << (unsigned int)(char) data[3] <<std::endl;
-//        std::cout<<"@x data[4]=" << (unsigned int)(char) data[4] <<std::endl;
-
-        *out_val_length = &length;
+        *out_val = &gg_out_str[0];
+        gg_out_int = gg_out_str.size();
+        *out_val_length = &gg_out_int;
             
         *err = 0;
     }   
