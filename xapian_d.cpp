@@ -1166,12 +1166,13 @@ XapianDatabase* new_Database(const char* _path, unsigned int _path_len, int db_t
     	    std::string path (_path, (unsigned long)_path_len);
 
     	    Xapian::Database* db;
-	    if (db_type == BRASS)
-    	     db = new Xapian::Database(Xapian::Brass::open(path));
-	    else if (db_type == CHERT)
-    	     db = new Xapian::Database(Xapian::Chert::open(path));
-	    else if (db_type == IN_MEMORY)
-    	     db = new Xapian::Database(Xapian::InMemory::open());
+    	     db = new Xapian::Database(path);
+//	    if (db_type == BRASS)
+//    	     db = new Xapian::Database(Xapian::Brass::open(path));
+//	    else if (db_type == CHERT)
+//    	     db = new Xapian::Database(Xapian::Chert::open(path));
+//	    else if (db_type == IN_MEMORY)
+//    	     db = new Xapian::Database(Xapian::InMemory::open());
 
 
     	    XapianDatabase* _new = new XapianDatabase ();
@@ -1213,12 +1214,13 @@ XapianWritableDatabase* new_WritableDatabase(const char* _path, unsigned int _pa
     	    std::string path (_path, (unsigned long)_path_len);
 
     	    Xapian::WritableDatabase* db;
-	    if (db_type == BRASS)
-    	     db = new Xapian::WritableDatabase(Xapian::Brass::open(path, action));
-	    else if (db_type == CHERT)
-    	     db = new Xapian::WritableDatabase(Xapian::Chert::open(path, action));
-	    else if (db_type == IN_MEMORY)
-    	     db = new Xapian::WritableDatabase(Xapian::InMemory::open());
+	    db = new Xapian::WritableDatabase(path, action);
+//	    if (db_type == BRASS)
+//    	     db = new Xapian::WritableDatabase(Xapian::Brass::open(path, action));
+//	    else if (db_type == CHERT)
+//    	     db = new Xapian::WritableDatabase(Xapian::Chert::open(path, action));
+//	    else if (db_type == IN_MEMORY)
+//    	     db = new Xapian::WritableDatabase(Xapian::InMemory::open());
 
     	    XapianWritableDatabase* _new = new XapianWritableDatabase ();
     	    _new->db = db;
