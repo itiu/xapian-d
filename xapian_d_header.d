@@ -323,7 +323,7 @@ interface XapianQuery
     @nogc void get_description(char **out_val, uint **out_val_length, byte *err);
     @nogc void serialise(char **out_val, uint **out_val_length, byte *err);
     @nogc XapianQuery add_right_query(int op_, XapianQuery _right, byte *err);
-    @nogc int  get_length (signed char *err);
+    @nogc int  get_length (byte *err);
 }
 
 /// A handle representing a document in a Xapian database
@@ -385,6 +385,7 @@ interface XapianQueryParser
                                   byte *err);
     @nogc void add_prefix(char *field_string, ulong field_string_len, char *prefix_string, ulong prefix_string_len, byte *err);
     @nogc void add_valuerangeprocessor(XapianNumberValueRangeProcessor pp, byte *err);
+    @nogc void set_max_wildcard_expansion (int limit, byte *err);
 }
 
 /// KeyMaker subclass which combines several values

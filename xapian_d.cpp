@@ -1165,6 +1165,19 @@ class XapianQueryParser
 	}
     }
 
+    virtual void set_max_wildcard_expansion (int limit, signed char *err)
+    {
+	try
+	{
+	    qp->set_max_wildcard_expansion (limit);
+	    *err = 0;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	}
+    }
+
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////
