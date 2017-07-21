@@ -7,7 +7,7 @@
 
  */
 
-module bind.xapian_d_header;
+module veda.bind.xapian_d_header;
 
 
 /// Enum of stem strategy
@@ -227,7 +227,7 @@ enum feature_flag
     FLAG_DEFAULT                 = FLAG_PHRASE | FLAG_BOOLEAN | FLAG_LOVEHATE
 };
 
-alias int   size_t;
+//alias int   size_t;
 alias int   int32_t;
 alias byte  int8_t;
 alias ubyte uint8_t;
@@ -242,9 +242,9 @@ const int DB_CREATE_OR_OVERWRITE = 3;
 /** Open for read/write; fail if no db exists. */
 const int DB_OPEN                = 4;
 
-const int BRASS = 1;
-const int CHERT = 2;
-const int IN_MEMORY = 3;
+const int BRASS                  = 1;
+const int CHERT                  = 2;
+const int IN_MEMORY              = 3;
 
 extern (C++)
 {
@@ -255,114 +255,116 @@ interface XapianNumberValueRangeProcessor
 
 interface XapianTermIterator
 {
-    void reset(byte *err);
-    void next(byte *err);
-    bool is_next(byte *err);
-    void get_term(char **out_val, uint **out_val_length, byte *err);
+    @nogc void reset(byte *err);
+    @nogc void next(byte *err);
+    @nogc bool is_next(byte *err);
+    @nogc void get_term(char **out_val, uint **out_val_length, byte *err);
 }
 
 /// Parses a piece of text and generate terms.
 interface XapianTermGenerator
 {
     /// Set the XapianStem object to be used for generating stemmed terms.
-    void set_stemmer(XapianStem stemmer, byte *err);
+    @nogc void set_stemmer(XapianStem stemmer, byte *err);
 
     /// -
-    void set_document(XapianDocument doc, byte *err);
+    @nogc void set_document(XapianDocument doc, byte *err);
 
     /// -
-    void index_text(const char *data_str, ulong data_len, byte *err);
+    @nogc void index_text(const char *data_str, ulong data_len, byte *err);
 
     /// -
-    void index_text(const char *data_str, ulong data_len, const char *prefix_str, ulong prefix_len, byte *err);
+    @nogc void index_text(const char *data_str, ulong data_len, const char *prefix_str, ulong prefix_len, byte *err);
 
     /// -
-    void index_text_without_positions(const char *data_str, ulong data_len, byte *err);
+    @nogc void index_text_without_positions(const char *data_str, ulong data_len, byte *err);
 
     /// -
-    void index_text_without_positions(const char *data_str, ulong data_len, const char *prefix_str, ulong prefix_len, byte *err);
+    @nogc void index_text_without_positions(const char *data_str, ulong data_len, const char *prefix_str, ulong prefix_len, byte *err);
 
     /// -
-    void index_data(int data, const char *prefix_str, ulong prefix_len, byte *err);
+    @nogc void index_data(int data, const char *prefix_str, ulong prefix_len, byte *err);
 
     /// -
-    void index_data(long data, const char *prefix_str, ulong prefix_len, byte *err);
+    @nogc void index_data(long data, const char *prefix_str, ulong prefix_len, byte *err);
 
     /// -
-    void index_data(float data, const char *prefix_str, ulong prefix_len, byte *err);
+    @nogc void index_data(float data, const char *prefix_str, ulong prefix_len, byte *err);
 
     /// -
-    void index_data(double data, const char *prefix_str, ulong prefix_len, byte *err);
+    @nogc void index_data(double data, const char *prefix_str, ulong prefix_len, byte *err);
 }
 
 /// This class is used to access a database, or a group of databases.
 interface XapianDatabase
 {
-    XapianEnquire new_Enquire(byte *err);
-    void close(byte *err);
-    void reopen(byte *err);
-    XapianTermIterator allterms(const char *prefix_str, ulong prefix_len, byte *err);
-    void add_database (XapianDatabase add_db, byte *err);    
+    @nogc XapianEnquire new_Enquire(byte *err);
+    @nogc void close(byte *err);
+    @nogc void reopen(byte *err);
+    @nogc XapianTermIterator allterms(const char *prefix_str, ulong prefix_len, byte *err);
+    @nogc void add_database(XapianDatabase add_db, byte *err);
 }
 
 /// This class provides read/write access to a database
 interface XapianWritableDatabase
 {
-    XapianEnquire new_Enquire(byte *err);
-    uint add_document(XapianDocument doc, byte *err);
-    uint replace_document(const char *_unique_term, ulong _unique_term_len, XapianDocument document, byte *err);
-    void delete_document(const char *_unique_term, ulong _unique_term_len, byte *err);
-    void commit(byte *err);
-    void close(byte *err);
+    @nogc XapianEnquire new_Enquire(byte *err);
+    @nogc uint add_document(XapianDocument doc, byte *err);
+    @nogc uint replace_document(const char *_unique_term, ulong _unique_term_len, XapianDocument document, byte *err);
+    @nogc void delete_document(const char *_unique_term, ulong _unique_term_len, byte *err);
+    @nogc void commit(byte *err);
+    @nogc void close(byte *err);
+    @nogc void reopen(byte *err);
 }
 
 /// Class representing a query
 interface XapianQuery
 {
-    void get_description(char **out_val, uint **out_val_length, byte *err);
-    void serialise(char **out_val, uint **out_val_length, byte *err);
-    XapianQuery add_right_query(int op_, XapianQuery _right, byte *err);
+    @nogc void get_description(char **out_val, uint **out_val_length, byte *err);
+    @nogc void serialise(char **out_val, uint **out_val_length, byte *err);
+    @nogc XapianQuery add_right_query(int op_, XapianQuery _right, byte *err);
+    @nogc int  get_length (signed char *err);
 }
 
 /// A handle representing a document in a Xapian database
 interface XapianDocument
 {
-    char *get_data(char **out_val, uint **out_val_length, byte *err);
-    void set_data(const char *data_str, ulong data_len, byte *err);
-    void add_boolean_term(const char *_data, ulong _data_len, byte *err);
-    void add_value(int slot, const char *_data, ulong _data_len, byte *err);
-    void add_value(int slot, int _data, byte *err);
-    void add_value(int slot, long _data, byte *err);
-    void add_value(int slot, float _data, byte *err);
-    void add_value(int slot, double _data, byte *err);
+    @nogc char *get_data(char **out_val, uint **out_val_length, byte *err);
+    @nogc void set_data(const char *data_str, ulong data_len, byte *err);
+    @nogc void add_boolean_term(const char *_data, ulong _data_len, byte *err);
+    @nogc void add_value(int slot, const char *_data, ulong _data_len, byte *err);
+    @nogc void add_value(int slot, int _data, byte *err);
+    @nogc void add_value(int slot, long _data, byte *err);
+    @nogc void add_value(int slot, float _data, byte *err);
+    @nogc void add_value(int slot, double _data, byte *err);
 }
 
 /// An iterator pointing to items in an MSet
 interface XapianMSetIterator
 {
-    uint get_documentid(byte *err);
-    XapianDocument get_document(byte *err);
-    void get_document_data(char **out_val, uint **out_val_length, byte *err);
+    @nogc uint get_documentid(byte *err);
+    @nogc XapianDocument get_document(byte *err);
+    @nogc void get_document_data(char **out_val, uint **out_val_length, byte *err);
 
-    void next(byte *err);
-    bool is_next(byte *err);
+    @nogc void next(byte *err);
+    @nogc bool is_next(byte *err);
 }
 
 /// A match set (MSet)
 interface XapianMSet
 {
-    int get_matches_estimated(byte *err);
-    int size(byte *err);
-    XapianMSetIterator iterator(byte *err);
+    @nogc int get_matches_estimated(byte *err);
+    @nogc int size(byte *err);
+    @nogc XapianMSetIterator iterator(byte *err);
 }
 
 /// This class provides an interface to the information retrieval system for the purpose of searching
 interface XapianEnquire
 {
-    void set_query(XapianQuery query, byte *err);
-    XapianMSet get_mset(int from, int size, byte *err);
-    void set_sort_by_key(XapianMultiValueKeyMaker sorter, bool p, byte *err);
-    void clear_matchspies();
+    @nogc void set_query(XapianQuery query, byte *err);
+    @nogc XapianMSet get_mset(int from, int size, byte *err);
+    @nogc void set_sort_by_key(XapianMultiValueKeyMaker sorter, bool p, byte *err);
+    @nogc void clear_matchspies();
 }
 
 /// Class representing a stemming algorithm
@@ -373,87 +375,167 @@ interface XapianStem
 /// Build a XapianQuery object from a user query string
 interface XapianQueryParser
 {
-    void set_stemmer(XapianStem stemmer, byte *err);
-    void set_database(XapianDatabase db, byte *err);
-    void set_database(XapianWritableDatabase db, byte *err);
-    void set_stemming_strategy(stem_strategy strategy, byte *err);
-    XapianQuery parse_query(char *query_string, ulong query_string_len, byte *err);
-    XapianQuery parse_query(char *query_string, ulong query_string_len, uint flags, byte *err);
-    XapianQuery parse_query(char *query_string, ulong query_string_len, uint flags, char *prefix_string, ulong prefix_string_len,
-                            byte *err);
-    void add_prefix(char *field_string, ulong field_string_len, char *prefix_string, ulong prefix_string_len, byte *err);
-    void add_valuerangeprocessor(XapianNumberValueRangeProcessor pp, byte *err);
+    @nogc void set_stemmer(XapianStem stemmer, byte *err);
+    @nogc void set_database(XapianDatabase db, byte *err);
+    @nogc void set_database(XapianWritableDatabase db, byte *err);
+    @nogc void set_stemming_strategy(stem_strategy strategy, byte *err);
+    @nogc XapianQuery parse_query(char *query_string, ulong query_string_len, byte *err);
+    @nogc XapianQuery parse_query(char *query_string, ulong query_string_len, uint flags, byte *err);
+    @nogc XapianQuery parse_query(char *query_string, ulong query_string_len, uint flags, char *prefix_string, ulong prefix_string_len,
+                                  byte *err);
+    @nogc void add_prefix(char *field_string, ulong field_string_len, char *prefix_string, ulong prefix_string_len, byte *err);
+    @nogc void add_valuerangeprocessor(XapianNumberValueRangeProcessor pp, byte *err);
 }
 
 /// KeyMaker subclass which combines several values
 interface XapianMultiValueKeyMaker
 {
-    void add_value(int pos, byte *err);
-    void add_value(int pos, bool asc_desc, byte *err);
+    @nogc void add_value(int pos, byte *err);
+    @nogc void add_value(int pos, bool asc_desc, byte *err);
 }
 
 /// -
-XapianDatabase new_Database(const char *path, ulong path_len, int db_type, byte *err);
+@nogc XapianDatabase new_Database(byte *err);
 
 /// -
-XapianWritableDatabase new_WritableDatabase(const char *path, ulong path_len, int action, int db_type, byte *err);
+@nogc XapianDatabase new_Database(const char *path, uint path_len, int db_type, byte *err);
 
 /// -
-XapianDocument new_Document(byte *err);
+@nogc XapianWritableDatabase new_WritableDatabase(const char *path, uint path_len, int action, int db_type, byte *err);
 
 /// -
-XapianMultiValueKeyMaker new_MultiValueKeyMaker(byte *err);
+@nogc XapianDocument new_Document(byte *err);
 
 /// -
-XapianQueryParser new_QueryParser(byte *err);
+@nogc XapianMultiValueKeyMaker new_MultiValueKeyMaker(byte *err);
 
 /// -
-XapianStem new_Stem(char *language, ulong language_len, byte *err);
+@nogc XapianQueryParser new_QueryParser(byte *err);
 
 /// -
-XapianTermGenerator new_TermGenerator(byte *err);
+@nogc XapianStem new_Stem(char *language, uint language_len, byte *err);
 
 /// -
-XapianNumberValueRangeProcessor new_NumberValueRangeProcessor(int slot, const char *_str, ulong _str_len, bool prefix, byte *err);
+@nogc XapianTermGenerator new_TermGenerator(byte *err);
 
 /// -
-XapianQuery new_Query(byte *err);
+@nogc XapianNumberValueRangeProcessor new_NumberValueRangeProcessor(int slot, const char *_str, ulong _str_len, bool prefix, byte *err);
 
 /// -
-XapianQuery new_Query(const char *_str, ulong _str_len, byte *err);
+@nogc XapianQuery new_Query(byte *err);
+
+/// -
+@nogc XapianQuery new_Query(const char *_str, uint _str_len, byte *err);
 //    XapianQuery new_Query_add (XapianQuery _left, XapianQuery _right);//, int op_);
 /// -
-XapianQuery new_Query_range(int op_, int slot, double _begin, double _end, byte *err);
+@nogc XapianQuery new_Query_range(int op_, int slot, double _begin, double _end, byte *err);
 
 /// -
-XapianQuery new_Query_double(int op_, int slot, double _value, byte *err);
+@nogc XapianQuery new_Query_double(int op_, int slot, double _value, byte *err);
 
 /// -
-XapianQuery new_Query_equal(int op_, int slot, const char *_str, ulong _str_len, byte *err);
+@nogc XapianQuery new_Query_equal(int op_, int slot, const char *_str, ulong _str_len, byte *err);
 
 /// -
-void sortable_serialise(double value, char **out_val, uint **out_val_length, byte *err);
+@nogc void sortable_serialise(double value, char **out_val, uint **out_val_length, byte *err);
 
 ////////
 
 /// -
-void destroy_Document(XapianDocument doc);
+@nogc void destroy_Document(XapianDocument doc);
 
 /// -
-void destroy_MSet(XapianMSet mset);
+@nogc void destroy_MSet(XapianMSet mset);
 
 /// -
-void destroy_MSetIterator(XapianMSetIterator msetit);
+@nogc void destroy_MSetIterator(XapianMSetIterator msetit);
 
 /// -
-void destroy_Query(XapianQuery query);
+@nogc void destroy_Query(XapianQuery query);
 
 /// -
-void destroy_Enquire(XapianEnquire enquire);
+@nogc void destroy_Enquire(XapianEnquire enquire);
 
 /// -
-void destroy_MultiValueKeyMaker(XapianMultiValueKeyMaker sorter);
+@nogc void destroy_MultiValueKeyMaker(XapianMultiValueKeyMaker sorter);
 
 /// -
-void destroy_Database(XapianDatabase db);
+@nogc void destroy_Database(XapianDatabase db);
 }
+
+class XapianError : Exception
+{
+    byte code = 0;
+
+    this(byte _code, string msg, string file = __FILE__, size_t line = __LINE__, Throwable next = null)
+    {
+        super(msg, file, line, next);
+        code = _code;
+    }
+
+    string get_xapian_msg()
+    {
+        if (xapian_msg_code.length == 0)
+            init_err_code();
+
+        return xapian_msg_code.get(code, "Unknown");
+    }
+}
+
+string get_xapian_err_msg(byte code)
+{
+    if (xapian_msg_code.length == 0)
+        init_err_code();
+
+    return xapian_msg_code.get(code, "Unknown");
+}
+
+private string[ byte ] xapian_msg_code;
+
+private void init_err_code()
+{
+    xapian_msg_code =
+    [
+        -1:"DatabaseModifiedError",
+        -2:"DatabaseLockError"
+        ,
+        -3:"LogicError"
+        ,
+        -4:"AssertionError"
+        ,
+        -5:"InvalidArgumentError"
+        ,
+        -6:"InvalidOperationError"
+        ,
+        -7:"UnimplementedError"
+        ,
+        -8:"RuntimeError"
+        ,
+        -9:"DatabaseError"
+        ,
+        -10:"DatabaseCorruptError"
+        ,
+        -11:"DatabaseCreateError"
+        ,
+        -12:"DatabaseOpeningError"
+        ,
+        -13:"DatabaseVersionError"
+        ,
+        -14:"DocNotFoundError"
+        ,
+        -15:"FeatureUnavailableError"
+        ,
+        -16:"InternalError"
+        ,
+        -17:"NetworkError"
+        ,
+        -18:"NetworkTimeoutError"
+        ,
+        -19:"QueryParserError"
+        ,
+        -20:"RangeError"
+        ,
+        -21:"SerialisationError"
+    ];
+}
+

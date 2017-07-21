@@ -445,11 +445,8 @@ class XapianQuery
 	try
 	{
 	    XapianQuery* _new = new XapianQuery ();
-//	    cout << "#ZZZ1" << query.get_description () << endl; 
-//	    cout << "#ZZZ2" << _right->query.get_description () << endl; 
 	    Xapian::Query _query ((Xapian::Query::op)op_, query, _right->query);
 	    _new->query = _query;
-//	    cout << "#ZZZ3" << endl; 
 
 	    *err = 0;
 	    return _new;
@@ -458,6 +455,22 @@ class XapianQuery
 	{	    
 	    *err = get_err_code (ex.get_type ());
 	    return NULL;
+	}
+    }
+
+    virtual int  get_length (signed char *err)
+    {
+	try
+	{
+	    int count = query.get_length ();
+
+	    *err = 0;
+	    return count;
+	}
+	catch (Xapian::Error ex)
+	{	    
+	    *err = get_err_code (ex.get_type ());
+	    return -1;
 	}
     }
 
