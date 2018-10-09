@@ -1,0 +1,11 @@
+{
+	"name": "xapian-d",
+	"targetType": "library",
+	"description": "veda storage third party libs",
+	"homepage": "http://github.com/itiu/xapian-d",
+	"authors": ["Bushenev Valeriy"],
+	"dependencies": {},
+	"license": "LGPL v3",
+	"buildOptions": ["releaseMode", "optimize", "inline"],
+	"sourceFiles":["lib64/libxapian-main.a", "lib64/libxapian-backend.a", "lib64/libstdc++.a", "lib64/libuuid.a", "lib64/libxapiand.a"]
+}
